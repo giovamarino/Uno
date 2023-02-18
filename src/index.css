@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+.App {
+  width: 80%;
+}
+
+.App div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 img {
-  width: 10%;
+  width: 12%;
 }

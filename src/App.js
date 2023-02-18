@@ -2,18 +2,26 @@ import "./App.css";
 import cards from "./data/cards.json";
 // import users from "./data/users.json";
 
-let n = Math.floor(Math.random() * cards.length);
-// console.log(n);
 let usersCards = [];
 let botsCards = [];
 let cardsInPlay = [];
 
+// choose random card
+// put it in cardsinplay
+let n;
+let setFirstCard = () => {
+  n = Math.floor(Math.random() * cards.length);
+  cardsInPlay.push(n);
+  console.log(n);
+};
+setFirstCard();
+
 let initialDraw = (player) => {
   for (let i = 0; i < 7; i++) {
     let cardSelection = Math.floor(Math.random() * cards.length);
-    // if card is already in hand:
+    // if card is already in play:
     if (cardsInPlay.includes(cardSelection)) {
-      // get new card. check if already in hand
+      // get new card. check if already in play
       while (cardsInPlay.includes(cardSelection)) {
         cardSelection = Math.floor(Math.random() * cards.length);
       }
@@ -35,6 +43,9 @@ function App() {
         {usersCards.map((card) => {
           return <img src={cards[card].img} alt="" />;
         })}
+      </div>
+      <div>
+        <img src={cards[n].img} alt="" />
       </div>
       <div>
         {botsCards.map((card) => {
