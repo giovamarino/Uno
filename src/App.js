@@ -4,9 +4,9 @@ import cards from "./data/cards.json";
 
 let n = Math.floor(Math.random() * cards.length);
 console.log(n);
+let usersCards = [];
 
 let initialDraw = () => {
-  let usersCards = [];
   for (let i = 0; i < 7; i++) {
     let cardSelection = Math.floor(Math.random() * cards.length);
     // if card is already in hand:
@@ -25,7 +25,9 @@ initialDraw();
 function App() {
   return (
     <div className="App">
-      <img src={cards[n].img} alt="" />
+      {usersCards.map((card) => {
+        return <img src={cards[card].img} alt="" />;
+      })}
     </div>
   );
 }
