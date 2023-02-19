@@ -4,6 +4,7 @@ import cards from "./data/cards.json";
 
 let usersCards = [];
 let botsCards = [];
+let centerCard;
 let cardsInPlay = [];
 
 // choose random card
@@ -11,10 +12,12 @@ let cardsInPlay = [];
 let n;
 let setFirstCard = () => {
   n = Math.floor(Math.random() * cards.length);
+  centerCard = n;
   cardsInPlay.push(n);
-  console.log(n);
+  // get number value of n
 };
 setFirstCard();
+console.log(`center card value: ${centerCard}`);
 
 let initialDraw = (player) => {
   for (let i = 0; i < 7; i++) {
@@ -49,7 +52,24 @@ function App() {
       </div>
       <div>
         {botsCards.map((card) => {
-          return <img src={cards[card].img} alt="" />;
+          return (
+            <img
+              onClick={() => {
+                console.log(`${cards[card].color} ${cards[card].number}`);
+
+                // if card color or number === table card color/number:
+                // set it
+                if (
+                  cards[card].number === cards[centerCard].number ||
+                  cards[card].color === cards[centerCard].color
+                ) {
+                  console.log(`matches center card`);
+                }
+              }}
+              src={cards[card].img}
+              alt=""
+            />
+          );
         })}
       </div>
     </div>

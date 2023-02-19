@@ -1,165 +1,245 @@
 [
   {
     "name": "blue 0",
+    "color": "blue",
+    "number": 0,
     "img": "/cards/blue-0.png"
   },
   {
     "name": "blue 1",
+    "color": "blue",
+    "number": 1,
     "img": "/cards/blue-1.png"
   },
   {
     "name": "blue 2",
+    "color": "blue",
+    "number": 2,
     "img": "/cards/blue-2.png"
   },
   {
     "name": "blue 3",
+    "color": "blue",
+    "number": 3,
     "img": "/cards/blue-3.png"
   },
   {
     "name": "blue 4",
+    "color": "blue",
+    "number": 4,
     "img": "/cards/blue-4.png"
   },
   {
     "name": "blue 5",
+    "color": "blue",
+    "number": 5,
     "img": "/cards/blue-5.png"
   },
   {
     "name": "blue 6",
+    "color": "blue",
+    "number": 6,
     "img": "/cards/blue-6.png"
   },
   {
     "name": "blue 7",
+    "color": "blue",
+    "number": 7,
     "img": "/cards/blue-7.png"
   },
   {
     "name": "blue 8",
+    "color": "blue",
+    "number": 8,
     "img": "/cards/blue-8.png"
   },
   {
     "name": "blue 9",
+    "color": "blue",
+    "number": 9,
     "img": "/cards/blue-9.png"
   },
 
   {
     "name": "green 0",
+    "color": "green",
+    "number": 0,
     "img": "/cards/green-0.png"
   },
   {
     "name": "green 1",
+    "color": "green",
+    "number": 1,
     "img": "/cards/green-1.png"
   },
   {
     "name": "green 2",
+    "color": "green",
+    "number": 2,
     "img": "/cards/green-2.png"
   },
   {
     "name": "green 3",
+    "color": "green",
+    "number": 3,
     "img": "/cards/green-3.png"
   },
   {
     "name": "green 4",
+    "color": "green",
+    "number": 4,
     "img": "/cards/green-4.png"
   },
   {
     "name": "green 5",
+    "color": "green",
+    "number": 5,
     "img": "/cards/green-5.png"
   },
   {
     "name": "green 6",
+    "color": "green",
+    "number": 6,
     "img": "/cards/green-6.png"
   },
   {
     "name": "green 7",
+    "color": "green",
+    "number": 7,
     "img": "/cards/green-7.png"
   },
   {
     "name": "green 8",
+    "color": "green",
+    "number": 8,
     "img": "/cards/green-8.png"
   },
   {
     "name": "green 9",
+    "color": "green",
+    "number": 9,
     "img": "/cards/green-9.png"
   },
 
   {
     "name": "red 0",
+    "color": "red",
+    "number": 0,
     "img": "/cards/red-0.png"
   },
   {
     "name": "red 1",
+    "color": "red",
+    "number": 1,
     "img": "/cards/red-1.png"
   },
   {
     "name": "red 2",
+    "color": "red",
+    "number": 2,
     "img": "/cards/red-2.png"
   },
   {
     "name": "red 3",
+    "color": "red",
+    "number": 3,
     "img": "/cards/red-3.png"
   },
   {
     "name": "red 4",
+    "color": "red",
+    "number": 4,
     "img": "/cards/red-4.png"
   },
   {
     "name": "red 5",
+    "color": "red",
+    "number": 5,
     "img": "/cards/red-5.png"
   },
   {
     "name": "red 6",
+    "color": "red",
+    "number": 6,
     "img": "/cards/red-6.png"
   },
   {
     "name": "red 7",
+    "color": "red",
+    "number": 7,
     "img": "/cards/red-7.png"
   },
   {
     "name": "red 8",
+    "color": "red",
+    "number": 8,
     "img": "/cards/red-8.png"
   },
   {
     "name": "red 9",
+    "color": "red",
+    "number": 9,
     "img": "/cards/red-9.png"
   },
 
   {
     "name": "yellow 0",
+    "color": "yellow",
+    "number": 0,
     "img": "/cards/yellow-0.png"
   },
   {
     "name": "yellow 1",
+    "color": "yellow",
+    "number": 1,
     "img": "/cards/yellow-1.png"
   },
   {
     "name": "yellow 2",
+    "color": "yellow",
+    "number": 2,
     "img": "/cards/yellow-2.png"
   },
   {
     "name": "yellow 3",
+    "color": "yellow",
+    "number": 3,
     "img": "/cards/yellow-3.png"
   },
   {
     "name": "yellow 4",
+    "color": "yellow",
+    "number": 4,
     "img": "/cards/yellow-4.png"
   },
   {
     "name": "yellow 5",
+    "color": "yellow",
+    "number": 5,
     "img": "/cards/yellow-5.png"
   },
   {
     "name": "yellow 6",
+    "color": "yellow",
+    "number": 6,
     "img": "/cards/yellow-6.png"
   },
   {
     "name": "yellow 7",
+    "color": "yellow",
+    "number": 7,
     "img": "/cards/yellow-7.png"
   },
   {
     "name": "yellow 8",
+    "color": "yellow",
+    "number": 8,
     "img": "/cards/yellow-8.png"
   },
   {
     "name": "yellow 9",
+    "color": "yellow",
+    "number": 9,
     "img": "/cards/yellow-9.png"
   }
 ]
