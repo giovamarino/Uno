@@ -1,6 +1,6 @@
-import "./App.css";
 import cards from "./data/cards.json";
-// import users from "./data/users.json";
+
+// let [typedCity, setTypedCity] = useState("");
 
 let usersCards = [];
 let botsCards = [];
@@ -39,6 +39,23 @@ initialDraw(botsCards);
 console.log(usersCards);
 console.log(botsCards);
 
+let playCard = (currentCard) => {
+  // if card color or number === table card color/number:
+  if (
+    cards[currentCard].number === cards[centerCard].number ||
+    cards[currentCard].color === cards[centerCard].color
+  ) {
+    // set new center card
+    // you can use the number to select the object in json file
+    // todo: remove it from usersCards
+    // todo: remove old centerCard from cardsInPlay
+    centerCard = currentCard;
+    console.log(
+      `usersCards:${usersCards} botsCards:${botsCards} centerCard:${centerCard} cardsInPlay:${cardsInPlay}`
+    );
+  }
+};
+
 function App() {
   return (
     <div className="App">
@@ -56,15 +73,7 @@ function App() {
             <img
               onClick={() => {
                 console.log(`${cards[card].color} ${cards[card].number}`);
-
-                // if card color or number === table card color/number:
-                // set it
-                if (
-                  cards[card].number === cards[centerCard].number ||
-                  cards[card].color === cards[centerCard].color
-                ) {
-                  console.log(`matches center card`);
-                }
+                playCard(card);
               }}
               src={cards[card].img}
               alt=""
