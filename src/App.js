@@ -1,81 +1,86 @@
 import cards from "./data/cards.json";
-
-// let [typedCity, setTypedCity] = useState("");
-
-let usersCards = [];
-let botsCards = [];
-let centerCard;
-let cardsInPlay = [];
-
-// choose random card
-// put it in cardsinplay
-let n;
-let setFirstCard = () => {
-  n = Math.floor(Math.random() * cards.length);
-  centerCard = n;
-  cardsInPlay.push(n);
-  // get number value of n
-};
-setFirstCard();
-console.log(`center card value: ${centerCard}`);
-
-let initialDraw = (player) => {
-  for (let i = 0; i < 7; i++) {
-    let cardSelection = Math.floor(Math.random() * cards.length);
-    // if card is already in play:
-    if (cardsInPlay.includes(cardSelection)) {
-      // get new card. check if already in play
-      while (cardsInPlay.includes(cardSelection)) {
-        cardSelection = Math.floor(Math.random() * cards.length);
-      }
-    }
-    player.push(cardSelection);
-    cardsInPlay.push(cardSelection);
-  }
-  console.log(`cards in play: ${cardsInPlay}`);
-};
-initialDraw(usersCards);
-initialDraw(botsCards);
-console.log(usersCards);
-console.log(botsCards);
-
-let playCard = (currentCard) => {
-  // if card color or number === table card color/number:
-  if (
-    cards[currentCard].number === cards[centerCard].number ||
-    cards[currentCard].color === cards[centerCard].color
-  ) {
-    // set new center card
-    // you can use the number to select the object in json file
-    // todo: remove it from usersCards
-    // todo: remove old centerCard from cardsInPlay
-    centerCard = currentCard;
-    console.log(
-      `usersCards:${usersCards} botsCards:${botsCards} centerCard:${centerCard} cardsInPlay:${cardsInPlay}`
-    );
-  }
-};
+import { useState, useEffect } from "react";
 
 function App() {
+  let [usersCards, setUsersCards] = useState([]);
+  let [botsCards, setBotsCards] = useState([]);
+  let [centerCard, setCenterCard] = useState([]);
+  let [cardsInPlay, setCardsInPlay] = useState([]);
+
+  useEffect(() => {
+    // get card. put it in centerCard and cardsInPlay array
+    let playCenterCard = () => {
+      let randomCard = [Math.floor(Math.random() * cards.length)];
+      console.log(randomCard);
+      return randomCard;
+    };
+    let centerCardArr = playCenterCard();
+    setCenterCard(centerCardArr);
+    setCardsInPlay(centerCardArr);
+
+    const initialDraw = (cardsInUse) => {
+      let cardsToAdd = [];
+      for (let i = 0; i < 7; i++) {
+        let randomCard = Math.floor(Math.random() * cards.length);
+        while (
+          cardsInUse.includes(randomCard) ||
+          cardsToAdd.includes(randomCard)
+        ) {
+          randomCard = Math.floor(Math.random() * cards.length);
+        }
+        cardsToAdd.push(randomCard);
+      }
+      console.log(cardsToAdd);
+      return cardsToAdd;
+    };
+
+    let usersInitialCards = initialDraw(centerCardArr);
+    setUsersCards(usersInitialCards);
+    setCardsInPlay(usersInitialCards);
+    let userAndCenterCard = [...centerCardArr, usersInitialCards];
+
+    let botsInitialCards = initialDraw(userAndCenterCard);
+    setBotsCards(botsInitialCards);
+    setCardsInPlay((currentCards) => [...currentCards, ...botsInitialCards]);
+  }, []);
+
+  let playCard = (currentCardIdx) => {
+    if (
+      cards[currentCardIdx].number === cards[centerCard].number ||
+      cards[currentCardIdx].color === cards[centerCard].color
+    ) {
+      console.log(`centerCard: ${centerCard}`);
+      console.log(`currentCardIdx: ${currentCardIdx}`);
+      // todo: remove it from usersCards
+      // todo: remove old centerCard from cardsInPlay
+      setCenterCard(currentCardIdx);
+      console.log(
+        `${cards[currentCardIdx].color} ${cards[currentCardIdx].number}`
+      );
+    }
+  };
+
   return (
     <div className="App">
       <div>
-        {usersCards.map((card) => {
-          return <img src={cards[card].img} alt="" />;
+        {usersCards.map((cardInHand) => {
+          return <img src={cards[cardInHand].img} alt="" />;
         })}
       </div>
       <div>
-        <img src={cards[n].img} alt="" />
+        {centerCard.map((card) => {
+          return <img src={cards[card].img} alt="" />;
+        })}
+        {/* <img src={cards[centerCard].img} alt="" /> */}
       </div>
       <div>
-        {botsCards.map((card) => {
+        {botsCards.map((cardInHand) => {
           return (
             <img
               onClick={() => {
-                console.log(`${cards[card].color} ${cards[card].number}`);
-                playCard(card);
+                playCard(cardInHand);
               }}
-              src={cards[card].img}
+              src={cards[cardInHand].img}
               alt=""
             />
           );
