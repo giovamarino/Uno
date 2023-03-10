@@ -8,15 +8,11 @@ function App() {
   let [cardsInPlay, setCardsInPlay] = useState([]);
 
   useEffect(() => {
-    // get card. put it in centerCard and cardsInPlay array
     let playCenterCard = () => {
-      let randomCard = [Math.floor(Math.random() * cards.length)];
+      let randomCard = Math.floor(Math.random() * cards.length);
       console.log(randomCard);
-      return randomCard;
+      return [randomCard];
     };
-    let centerCardArr = playCenterCard();
-    setCenterCard(centerCardArr);
-    setCardsInPlay(centerCardArr);
 
     const initialDraw = (cardsInUse) => {
       let cardsToAdd = [];
@@ -34,12 +30,18 @@ function App() {
       return cardsToAdd;
     };
 
+    let centerCardArr = playCenterCard();
+    setCenterCard(centerCardArr);
+    setCardsInPlay(centerCardArr);
+
     let usersInitialCards = initialDraw(centerCardArr);
     setUsersCards(usersInitialCards);
-    setCardsInPlay(usersInitialCards);
-    let userAndCenterCard = [...centerCardArr, usersInitialCards];
+    setCardsInPlay((currentCards) => [...currentCards, ...usersInitialCards]);
 
-    let botsInitialCards = initialDraw(userAndCenterCard);
+    let botsInitialCards = initialDraw([
+      ...centerCardArr,
+      ...usersInitialCards,
+    ]);
     setBotsCards(botsInitialCards);
     setCardsInPlay((currentCards) => [...currentCards, ...botsInitialCards]);
   }, []);
@@ -49,13 +51,11 @@ function App() {
       cards[currentCardIdx].number === cards[centerCard].number ||
       cards[currentCardIdx].color === cards[centerCard].color
     ) {
-      console.log(`centerCard: ${centerCard}`);
-      console.log(`currentCardIdx: ${currentCardIdx}`);
       // todo: remove it from usersCards
       // todo: remove old centerCard from cardsInPlay
-      setCenterCard(currentCardIdx);
+      setCenterCard([currentCardIdx]);
       console.log(
-        `${cards[currentCardIdx].color} ${cards[currentCardIdx].number}`
+        `centerCard: ${cards[currentCardIdx].color} ${cards[currentCardIdx].number}`
       );
     }
   };
@@ -71,7 +71,6 @@ function App() {
         {centerCard.map((card) => {
           return <img src={cards[card].img} alt="" />;
         })}
-        {/* <img src={cards[centerCard].img} alt="" /> */}
       </div>
       <div>
         {botsCards.map((cardInHand) => {
