@@ -69,6 +69,17 @@ function App() {
     }
   };
 
+  // put card in user/bot
+  let drawCard = (setWhichHand, whichCards) => {
+    let randomCard = Math.floor(Math.random() * cards.length);
+
+    while (cardsInPlay.includes(randomCard)) {
+      randomCard = Math.floor(Math.random() * cards.length);
+    }
+    setWhichHand([...whichCards, randomCard]);
+    setCardsInPlay([...cardsInPlay, randomCard]);
+  };
+
   useEffect(() => {
     console.log(cardsInPlay);
   }, [cardsInPlay]);
@@ -81,6 +92,14 @@ function App() {
         })}
       </div>
       <div>
+        <img
+          // onClick={() => console.log(`button works`)}
+          onClick={() => {
+            drawCard(setUsersCards, usersCards);
+          }}
+          src="/drawCard.png"
+          alt=""
+        />
         {centerCard.map((card) => {
           return <img src={cards[card].img} alt="" />;
         })}
