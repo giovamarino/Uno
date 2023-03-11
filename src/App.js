@@ -2,8 +2,8 @@ import cards from "./data/cards.json";
 import { useState, useEffect } from "react";
 
 function App() {
-  let [usersCards, setUsersCards] = useState([]);
   let [botsCards, setBotsCards] = useState([]);
+  let [usersCards, setUsersCards] = useState([]);
   let [centerCard, setCenterCard] = useState([]);
   let [cardsInPlay, setCardsInPlay] = useState([]);
 
@@ -30,23 +30,26 @@ function App() {
       return cardsToAdd;
     };
 
-    let centerCardArr = playCenterCard();
-    setCenterCard(centerCardArr);
-    setCardsInPlay(centerCardArr);
+    {
+      let centerCardArr = playCenterCard();
+      setCenterCard(centerCardArr);
+      setCardsInPlay(centerCardArr);
 
-    let usersInitialCards = initialDraw(centerCardArr);
-    setUsersCards(usersInitialCards);
-    setCardsInPlay((currentCards) => [...currentCards, ...usersInitialCards]);
+      let botsInitialCards = initialDraw(centerCardArr);
+      setBotsCards(botsInitialCards);
+      setCardsInPlay((currentCards) => [...currentCards, ...botsInitialCards]);
 
-    let botsInitialCards = initialDraw([
-      ...centerCardArr,
-      ...usersInitialCards,
-    ]);
-    setBotsCards(botsInitialCards);
-    setCardsInPlay((currentCards) => [...currentCards, ...botsInitialCards]);
+      let usersInitialCards = initialDraw([
+        ...centerCardArr,
+        ...botsInitialCards,
+      ]);
+
+      setUsersCards(usersInitialCards);
+      setCardsInPlay((currentCards) => [...currentCards, ...usersInitialCards]);
+    }
   }, []);
 
-  let playCard = (currentCardIdx) => {
+  let playCard = (currentCardIdx, setWhichHand, whichCards) => {
     if (
       cards[currentCardIdx].number === cards[centerCard].number ||
       cards[currentCardIdx].color === cards[centerCard].color
@@ -54,6 +57,14 @@ function App() {
       // todo: remove it from usersCards
       // todo: remove old centerCard from cardsInPlay
       setCenterCard([currentCardIdx]);
+
+      // removes cards from hand
+      whichCards.forEach(() => {
+        let newHand = whichCards.filter(
+          (element) => element !== currentCardIdx
+        );
+        setWhichHand(newHand);
+      });
       console.log(
         `centerCard: ${cards[currentCardIdx].color} ${cards[currentCardIdx].number}`
       );
@@ -63,7 +74,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        {usersCards.map((cardInHand) => {
+        {botsCards.map((cardInHand) => {
           return <img src={cards[cardInHand].img} alt="" />;
         })}
       </div>
@@ -73,11 +84,12 @@ function App() {
         })}
       </div>
       <div>
-        {botsCards.map((cardInHand) => {
+        {usersCards.map((cardInHand) => {
           return (
             <img
               onClick={() => {
-                playCard(cardInHand);
+                // index, know if user/bot
+                playCard(cardInHand, setUsersCards, usersCards);
               }}
               src={cards[cardInHand].img}
               alt=""
