@@ -10,7 +10,6 @@ function App() {
   useEffect(() => {
     let playCenterCard = () => {
       let randomCard = Math.floor(Math.random() * cards.length);
-      console.log(randomCard);
       return [randomCard];
     };
 
@@ -54,22 +53,25 @@ function App() {
       cards[currentCardIdx].number === cards[centerCard].number ||
       cards[currentCardIdx].color === cards[centerCard].color
     ) {
-      // todo: remove it from usersCards
-      // todo: remove old centerCard from cardsInPlay
       setCenterCard([currentCardIdx]);
 
-      // removes cards from hand
+      // removes selected card from hand and cardsInPlay
       whichCards.forEach(() => {
         let newHand = whichCards.filter(
           (element) => element !== currentCardIdx
         );
+        let newCardsInPlay = cardsInPlay.filter(
+          (element) => element !== currentCardIdx
+        );
         setWhichHand(newHand);
+        setCardsInPlay(newCardsInPlay);
       });
-      console.log(
-        `centerCard: ${cards[currentCardIdx].color} ${cards[currentCardIdx].number}`
-      );
     }
   };
+
+  useEffect(() => {
+    console.log(cardsInPlay);
+  }, [cardsInPlay]);
 
   return (
     <div className="App">
