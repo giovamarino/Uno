@@ -7,9 +7,13 @@ function App() {
   let [centerCard, setCenterCard] = useState([]);
   let [cardsInPlay, setCardsInPlay] = useState([]);
 
+  let generateRandomCard = () => {
+    return Math.floor(Math.random() * cards.length);
+  };
+
   useEffect(() => {
     let playCenterCard = () => {
-      let randomCard = Math.floor(Math.random() * cards.length);
+      let randomCard = generateRandomCard();
       console.log(`randomCard: ${randomCard}`);
       return [randomCard];
     };
@@ -17,12 +21,12 @@ function App() {
     const initialDraw = (cardsInUse) => {
       let cardsToAdd = [];
       for (let i = 0; i < 7; i++) {
-        let randomCard = Math.floor(Math.random() * cards.length);
+        let randomCard = generateRandomCard();
         while (
           cardsInUse.includes(randomCard) ||
           cardsToAdd.includes(randomCard)
         ) {
-          randomCard = Math.floor(Math.random() * cards.length);
+          randomCard = generateRandomCard();
         }
         cardsToAdd.push(randomCard);
       }
@@ -71,10 +75,10 @@ function App() {
 
   // put card in user/bot hand
   let drawCard = (setWhichHand, whichCards) => {
-    let randomCard = Math.floor(Math.random() * cards.length);
+    let randomCard = generateRandomCard();
 
     while (cardsInPlay.includes(randomCard)) {
-      randomCard = Math.floor(Math.random() * cards.length);
+      randomCard = generateRandomCard();
     }
     setWhichHand([...whichCards, randomCard]);
     setCardsInPlay([...cardsInPlay, randomCard]);
