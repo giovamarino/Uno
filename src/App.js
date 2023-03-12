@@ -10,6 +10,7 @@ function App() {
   useEffect(() => {
     let playCenterCard = () => {
       let randomCard = Math.floor(Math.random() * cards.length);
+      console.log(`randomCard: ${randomCard}`);
       return [randomCard];
     };
 
@@ -29,6 +30,7 @@ function App() {
       return cardsToAdd;
     };
 
+    // set initial center, bot, and user cards
     {
       let centerCardArr = playCenterCard();
       setCenterCard(centerCardArr);
@@ -53,23 +55,21 @@ function App() {
       cards[currentCardIdx].number === cards[centerCard].number ||
       cards[currentCardIdx].color === cards[centerCard].color
     ) {
+      // sets new center card. removes card from hand.
       setCenterCard([currentCardIdx]);
+      let newHand = whichCards.filter((element) => element !== currentCardIdx);
+      setWhichHand(newHand);
 
-      // removes selected card from hand and cardsInPlay
-      whichCards.forEach(() => {
-        let newHand = whichCards.filter(
-          (element) => element !== currentCardIdx
-        );
-        let newCardsInPlay = cardsInPlay.filter(
-          (element) => element !== currentCardIdx
-        );
-        setWhichHand(newHand);
-        setCardsInPlay(newCardsInPlay);
-      });
+      // removes old center card from play
+      let [centerCardNumber] = centerCard;
+      let filteredCardsInPlay = cardsInPlay.filter(
+        (element) => element !== centerCardNumber
+      );
+      setCardsInPlay(filteredCardsInPlay);
     }
   };
 
-  // put card in user/bot
+  // put card in user/bot hand
   let drawCard = (setWhichHand, whichCards) => {
     let randomCard = Math.floor(Math.random() * cards.length);
 
@@ -81,7 +81,7 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(cardsInPlay);
+    console.log(`cards in play: ${cardsInPlay}`);
   }, [cardsInPlay]);
 
   return (
@@ -93,7 +93,6 @@ function App() {
       </div>
       <div>
         <img
-          // onClick={() => console.log(`button works`)}
           onClick={() => {
             drawCard(setUsersCards, usersCards);
           }}
@@ -109,7 +108,6 @@ function App() {
           return (
             <img
               onClick={() => {
-                // index, know if user/bot
                 playCard(cardInHand, setUsersCards, usersCards);
               }}
               src={cards[cardInHand].img}
