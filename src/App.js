@@ -6,6 +6,7 @@ function App() {
   let [usersCards, setUsersCards] = useState([]);
   let [centerCard, setCenterCard] = useState([]);
   let [cardsInPlay, setCardsInPlay] = useState([]);
+  let [canPlayCards, setCanPlayCards] = useState(true);
 
   let generateRandomCard = () => {
     return Math.floor(Math.random() * cards.length);
@@ -56,8 +57,9 @@ function App() {
 
   let playCard = (currentCardIdx, setWhichHand, whichCards) => {
     if (
-      cards[currentCardIdx].number === cards[centerCard].number ||
-      cards[currentCardIdx].color === cards[centerCard].color
+      canPlayCards &&
+      (cards[currentCardIdx].number === cards[centerCard].number ||
+        cards[currentCardIdx].color === cards[centerCard].color)
     ) {
       // sets new center card. removes card from hand.
       setCenterCard([currentCardIdx]);
@@ -70,19 +72,28 @@ function App() {
         (element) => element !== centerCardNumber
       );
       setCardsInPlay(filteredCardsInPlay);
+      setCanPlayCards(false);
     }
   };
 
   // put card in user/bot hand
   let drawCard = (setWhichHand, whichCards) => {
-    let randomCard = generateRandomCard();
+    if (canPlayCards) {
+      let randomCard = generateRandomCard();
 
-    while (cardsInPlay.includes(randomCard)) {
-      randomCard = generateRandomCard();
+      while (cardsInPlay.includes(randomCard)) {
+        randomCard = generateRandomCard();
+      }
+      setWhichHand([...whichCards, randomCard]);
+      setCardsInPlay([...cardsInPlay, randomCard]);
     }
-    setWhichHand([...whichCards, randomCard]);
-    setCardsInPlay([...cardsInPlay, randomCard]);
   };
+
+  useEffect(() => {
+    if (!canPlayCards) {
+      console.log(`bot's turn`);
+    }
+  }, [canPlayCards]);
 
   useEffect(() => {
     console.log(`cards in play: ${cardsInPlay}`);
