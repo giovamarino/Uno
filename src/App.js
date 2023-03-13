@@ -57,9 +57,8 @@ function App() {
 
   let playCard = (currentCardIdx, setWhichHand, whichCards) => {
     if (
-      canPlayCards &&
-      (cards[currentCardIdx].number === cards[centerCard].number ||
-        cards[currentCardIdx].color === cards[centerCard].color)
+      cards[currentCardIdx].number === cards[centerCard].number ||
+      cards[currentCardIdx].color === cards[centerCard].color
     ) {
       // sets new center card. removes card from hand.
       setCenterCard([currentCardIdx]);
@@ -72,31 +71,115 @@ function App() {
         (element) => element !== centerCardNumber
       );
       setCardsInPlay(filteredCardsInPlay);
-      setCanPlayCards(false);
+      setCanPlayCards(!canPlayCards);
     }
   };
 
   // put card in user/bot hand
   let drawCard = (setWhichHand, whichCards) => {
-    if (canPlayCards) {
-      let randomCard = generateRandomCard();
+    // if (canPlayCards) {
+    let randomCard = generateRandomCard();
 
-      while (cardsInPlay.includes(randomCard)) {
-        randomCard = generateRandomCard();
-      }
-      setWhichHand([...whichCards, randomCard]);
-      setCardsInPlay([...cardsInPlay, randomCard]);
+    while (cardsInPlay.includes(randomCard)) {
+      randomCard = generateRandomCard();
     }
+    setWhichHand([...whichCards, randomCard]);
+    setCardsInPlay([...cardsInPlay, randomCard]);
+    // }
+  };
+
+  // bot's turn
+  useEffect(() => {
+    if (!canPlayCards) {
+      setTimeout(() => {
+        // botsCards.forEach((cardInHand) => {
+        //   playCard(cardInHand, setBotsCards, botsCards);
+        // });
+        organizeHand();
+      }, 1000);
+    }
+  }, [canPlayCards]);
+
+  // bot functions
+  let organizeHand = () => {
+    // playable cards
+    let numberedCards = [];
+    let actionCards = [];
+    let wildCards = [];
+
+    // extra organization
+    let blueCards = [];
+    let greenCards = [];
+    let redCards = [];
+    let yellowCards = [];
+    // maybe: drawingCards[]
+
+    botsCards.forEach((cardInHandIdx) => {
+      // console.log(cardInHandIdx);
+      let matchingNumbers =
+        cards[cardInHandIdx].number === cards[centerCard].number;
+      let matchingColors =
+        cards[cardInHandIdx].color === cards[centerCard].color;
+      if ((matchingNumbers || matchingColors) && cardInHandIdx <= 39) {
+        numberedCards.push(cardInHandIdx);
+      } else if (matchingColors && cardInHandIdx >= 40 && cardInHandIdx <= 51) {
+        actionCards.push(cardInHandIdx);
+      } else if (cardInHandIdx >= 52) {
+        wildCards.push(cardInHandIdx);
+      }
+
+      if (cardInHandIdx <= 9) {
+        blueCards.push(cardInHandIdx);
+      } else if (cardInHandIdx >= 10 && cardInHandIdx <= 19) {
+        greenCards.push(cardInHandIdx);
+      } else if (cardInHandIdx >= 20 && cardInHandIdx <= 29) {
+        redCards.push(cardInHandIdx);
+      } else if (cardInHandIdx >= 30 && cardInHandIdx <= 39) {
+        yellowCards.push(cardInHandIdx);
+      }
+    });
+
+    // determine which card to play
+    // if none:
+    if (
+      numberedCards.length === 0 &&
+      actionCards.length === 0 &&
+      wildCards.length === 0
+    ) {
+      console.log(`no playable cards`);
+      drawCard(setBotsCards, botsCards);
+      // botsCards((a) => console.log(`botsCards: ${a}`));
+      console.log(`botsCards: ${botsCards}`);
+    } else if (
+      numberedCards.length <= actionCards.length &&
+      actionCards.length > 0
+    ) {
+      console.log(`play action card`);
+    } else if (numberedCards != null) {
+      console.log(`play random numbered card`);
+    } else {
+      console.log(`choose wild card `);
+    }
+
+    console.log(`numberedCards: ${numberedCards}`);
+    console.log(`actionCards: ${actionCards}`);
+    console.log(`wildCards: ${wildCards}`);
+    console.log(`blueCards: ${blueCards}`);
+    console.log(`greenCards: ${greenCards}`);
+    console.log(`redCards: ${redCards}`);
+    console.log(`yellowCards: ${yellowCards}`);
   };
 
   useEffect(() => {
     if (!canPlayCards) {
-      console.log(`bot's turn`);
+      setTimeout(() => {
+        console.log(`right after draw`);
+      }, 1000);
     }
-  }, [canPlayCards]);
+  }, [botsCards]);
 
   useEffect(() => {
-    console.log(`cards in play: ${cardsInPlay}`);
+    console.log(cardsInPlay);
   }, [cardsInPlay]);
 
   return (
@@ -109,7 +192,9 @@ function App() {
       <div>
         <img
           onClick={() => {
-            drawCard(setUsersCards, usersCards);
+            if (canPlayCards) {
+              drawCard(setUsersCards, usersCards);
+            }
           }}
           src="/drawCard.png"
           alt=""
@@ -123,7 +208,9 @@ function App() {
           return (
             <img
               onClick={() => {
-                playCard(cardInHand, setUsersCards, usersCards);
+                if (canPlayCards) {
+                  playCard(cardInHand, setUsersCards, usersCards);
+                }
               }}
               src={cards[cardInHand].img}
               alt=""
