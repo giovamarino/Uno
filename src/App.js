@@ -121,7 +121,7 @@ function App() {
         cards[cardInHandIdx].color === cards[centerCard].color;
 
       if ((matchingNumbers || matchingColors) && cardInHandIdx <= 39) {
-        numberedCards.push(cardInHandIdx);
+        // numberedCards.push(cardInHandIdx);
       } else if (matchingColors && cardInHandIdx >= 40 && cardInHandIdx <= 51) {
         actionCards.push(cardInHandIdx);
       } else if (cardInHandIdx >= 52) {
@@ -182,16 +182,16 @@ function App() {
         //   if none, randomly choose between ones of highest length
         // }
         if (
-          (cards[botsCards[botsCards.length - 1]].number ===
-            cards[centerCard].number ||
-            cards[botsCards[botsCards.length - 1]].color ===
-              cards[centerCard].color) &&
-          botsCards[botsCards.length - 1] <= 39
-
-          // cards[botsCards[botsCards.length - 1]].number ===
+          // (cards[botsCards[botsCards.length - 1]].number ===
           //   cards[centerCard].number ||
-          // cards[botsCards[botsCards.length - 1]].color ===
-          //   cards[centerCard].color
+          //   cards[botsCards[botsCards.length - 1]].color ===
+          //     cards[centerCard].color) &&
+          // botsCards[botsCards.length - 1] <= 39
+
+          cards[botsCards[botsCards.length - 1]].number ===
+            cards[centerCard].number ||
+          cards[botsCards[botsCards.length - 1]].color ===
+            cards[centerCard].color
 
           // same color DONE
           // same number DONE

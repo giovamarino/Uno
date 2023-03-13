@@ -241,5 +241,106 @@
     "color": "yellow",
     "number": 9,
     "img": "/cards/yellow-9.png"
+  },
+
+  {
+    "name": "blue draw-two",
+    "color": "blue",
+    "type": "action",
+    "function": "drawTwo",
+    "img": "/cards/blue-drawtwo.png"
+  },
+  {
+    "name": "blue reverse",
+    "color": "blue",
+    "type": "action",
+    "function": "reverse",
+    "img": "/cards/blue-reverse.png"
+  },
+  {
+    "name": "blue skip",
+    "color": "blue",
+    "type": "action",
+    "function": "skip",
+    "img": "/cards/blue-skip.png"
+  },
+
+  {
+    "name": "green draw-two",
+    "color": "green",
+    "type": "action",
+    "function": "drawTwo",
+    "img": "/cards/green-drawtwo.png"
+  },
+  {
+    "name": "green reverse",
+    "color": "green",
+    "type": "action",
+    "function": "reverse",
+    "img": "/cards/green-reverse.png"
+  },
+  {
+    "name": "green skip",
+    "color": "green",
+    "type": "action",
+    "function": "skip",
+    "img": "/cards/green-skip.png"
+  },
+
+  {
+    "name": "red draw-two",
+    "color": "red",
+    "type": "action",
+    "function": "drawTwo",
+    "img": "/cards/red-drawtwo.png"
+  },
+  {
+    "name": "red reverse",
+    "color": "red",
+    "type": "action",
+    "function": "reverse",
+    "img": "/cards/red-reverse.png"
+  },
+  {
+    "name": "red skip",
+    "color": "red",
+    "type": "action",
+    "function": "skip",
+    "img": "/cards/red-skip.png"
+  },
+
+  {
+    "name": "yellow draw-two",
+    "color": "yellow",
+    "type": "action",
+    "function": "drawTwo",
+    "img": "/cards/yellow-drawtwo.png"
+  },
+  {
+    "name": "yellow reverse",
+    "color": "yellow",
+    "type": "action",
+    "function": "reverse",
+    "img": "/cards/yellow-reverse.png"
+  },
+  {
+    "name": "yellow skip",
+    "color": "yellow",
+    "type": "action",
+    "function": "skip",
+    "img": "/cards/yellow-skip.png"
+  },
+
+  {
+    "name": "wild standard",
+    "type": "wild",
+    "function": "wildColor",
+    "img": "/cards/wild-standard.png"
+  },
+  {
+    "name": "wild draw-four",
+    "type": "wild",
+    "function": "wildDrawFour",
+    "img": "/cards/wild-drawfour.png"
   }
 ]
