@@ -15,7 +15,8 @@ function App() {
   useEffect(() => {
     let playCenterCard = () => {
       let randomCard = generateRandomCard();
-      console.log(`randomCard: ${randomCard}`);
+      // console.log(`randomCard: ${randomCard}`);
+      console.log(`center: ${cards[randomCard].name}`);
       return [randomCard];
     };
 
@@ -57,8 +58,27 @@ function App() {
 
   let playCard = (currentCardIdx, setWhichHand, whichCards) => {
     if (
-      cards[currentCardIdx].number === cards[centerCard].number ||
-      cards[currentCardIdx].color === cards[centerCard].color
+      // cards[currentCardIdx].number === cards[centerCard].number ||
+      // cards[currentCardIdx].color === cards[centerCard].color
+
+      // same number
+      (cards[currentCardIdx].number === cards[centerCard].number &&
+        cards[currentCardIdx].number !== undefined &&
+        cards[centerCard].number !== undefined) ||
+      // same colors
+      (cards[currentCardIdx].color === cards[centerCard].color &&
+        cards[currentCardIdx].color !== undefined &&
+        cards[centerCard].color !== undefined) ||
+      // (cards[botsCards[botsCards.length - 1]].color ===
+      //   cards[centerCard].color &&
+      //   cards[botsCards[botsCards.length - 1]].color !== undefined &&
+      //   cards[centerCard].color !== undefined) ||
+
+      // same action type
+      (cards[currentCardIdx].type === cards[centerCard].type &&
+        cards[currentCardIdx].function === cards[centerCard].function &&
+        cards[currentCardIdx].type === "action" &&
+        cards[currentCardIdx].function !== undefined)
     ) {
       // sets new center card. removes card from hand.
       setCenterCard([currentCardIdx]);
@@ -72,6 +92,10 @@ function App() {
       );
       setCardsInPlay(filteredCardsInPlay);
       setCanPlayCards(!canPlayCards);
+    }
+    // safeguard after testing drawn cards for bot
+    else if (!canPlayCards) {
+      setCanPlayCards(true);
     }
   };
 
@@ -95,13 +119,13 @@ function App() {
         // botsCards.forEach((cardInHand) => {
         //   playCard(cardInHand, setBotsCards, botsCards);
         // });
-        organizeHand();
+        scanHand();
       }, 1000);
     }
   }, [canPlayCards]);
 
   // bot functions
-  let organizeHand = () => {
+  let scanHand = () => {
     // playable cards
     let numberedCards = [];
     let actionCards = [];
@@ -120,6 +144,7 @@ function App() {
       let matchingColors =
         cards[cardInHandIdx].color === cards[centerCard].color;
 
+      // pushing cardIdxs to arrays
       if ((matchingNumbers || matchingColors) && cardInHandIdx <= 39) {
         // numberedCards.push(cardInHandIdx);
       } else if (matchingColors && cardInHandIdx >= 40 && cardInHandIdx <= 51) {
@@ -128,6 +153,7 @@ function App() {
         wildCards.push(cardInHandIdx);
       }
 
+      // pushing cardIdxs to arrays
       if (cardInHandIdx <= 9) {
         blueCards.push(cardInHandIdx);
       } else if (cardInHandIdx >= 10 && cardInHandIdx <= 19) {
@@ -140,7 +166,7 @@ function App() {
     });
 
     // determine which card to play
-    // if none:
+    // if N/A, draw card
     if (
       numberedCards.length === 0 &&
       actionCards.length === 0 &&
@@ -148,15 +174,21 @@ function App() {
     ) {
       console.log(`no playable cards`);
       drawCard(setBotsCards, botsCards);
-      console.log(`botsCards: ${botsCards}`);
-    } else if (
+    }
+    // play action card
+    else if (
       numberedCards.length <= actionCards.length &&
       actionCards.length > 0
+      // work on this logic later
     ) {
       console.log(`play action card`);
-    } else if (numberedCards != null) {
+    }
+    // play numbered card
+    else if (numberedCards.length !== 0) {
       console.log(`play random numbered card`);
-    } else {
+    }
+    // play wild card
+    else {
       console.log(`choose wild card `);
     }
 
@@ -171,33 +203,18 @@ function App() {
     }
   };
 
-  // plays drawn card
+  // when bot draws 1 card
   useEffect(() => {
     if (!canPlayCards) {
       setTimeout(() => {
-        // if (wildCard) {
-        // botWildCardSelection():
-        //   compare colorCard arrays. select one with highest length.
-        //   if the same, choose whatever color user just changed from
-        //   if none, randomly choose between ones of highest length
-        // }
-        if (
-          // (cards[botsCards[botsCards.length - 1]].number ===
-          //   cards[centerCard].number ||
-          //   cards[botsCards[botsCards.length - 1]].color ===
-          //     cards[centerCard].color) &&
-          // botsCards[botsCards.length - 1] <= 39
-
-          cards[botsCards[botsCards.length - 1]].number ===
-            cards[centerCard].number ||
-          cards[botsCards[botsCards.length - 1]].color ===
-            cards[centerCard].color
-
-          // same color DONE
-          // same number DONE
-          // same actiontype PENDING
-        ) {
-          console.log("playing drawn card");
+        if (1 === 2) {
+          // if (wildCard) {
+          // botWildCardSelection():
+          //   compare colorCard arrays. select one with highest length.
+          //   if the same, choose whatever color user just changed from
+          //   if none, randomly choose between ones of highest length
+          // }
+        } else {
           console.log(
             `drawn: ${cards[botsCards[botsCards.length - 1]].color} ${
               cards[botsCards[botsCards.length - 1]].number
@@ -207,22 +224,10 @@ function App() {
             `center: ${cards[centerCard].color} ${cards[centerCard].number}`
           );
           playCard(botsCards[botsCards.length - 1], setBotsCards, botsCards);
-        } else {
-          setCanPlayCards(true);
         }
       }, 1000);
     }
   }, [botsCards]);
-
-  useEffect(() => {
-    console.log(cardsInPlay);
-  }, [cardsInPlay]);
-
-  useEffect(() => {
-    if (canPlayCards) {
-      console.log(`player's turn`);
-    } else console.log(`bot's turn`);
-  }, [canPlayCards]);
 
   return (
     <div className="App">
