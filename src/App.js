@@ -7,6 +7,7 @@ function App() {
   let [centerCard, setCenterCard] = useState([]);
   let [cardsInPlay, setCardsInPlay] = useState([]);
   let [canPlayCards, setCanPlayCards] = useState(true);
+  let [colorArrays, setColorArrays] = useState([]);
 
   let generateRandomCard = () => {
     return Math.floor(Math.random() * cards.length);
@@ -14,8 +15,7 @@ function App() {
 
   useEffect(() => {
     let playCenterCard = () => {
-      let randomCard = generateRandomCard();
-      // console.log(`randomCard: ${randomCard}`);
+      let randomCard = Math.floor(Math.random() * 40);
       console.log(`center: ${cards[randomCard].name}`);
       return [randomCard];
     };
@@ -58,9 +58,6 @@ function App() {
 
   let playCard = (currentCardIdx, setWhichHand, whichCards) => {
     if (
-      // cards[currentCardIdx].number === cards[centerCard].number ||
-      // cards[currentCardIdx].color === cards[centerCard].color
-
       // same number
       (cards[currentCardIdx].number === cards[centerCard].number &&
         cards[currentCardIdx].number !== undefined &&
@@ -69,11 +66,6 @@ function App() {
       (cards[currentCardIdx].color === cards[centerCard].color &&
         cards[currentCardIdx].color !== undefined &&
         cards[centerCard].color !== undefined) ||
-      // (cards[botsCards[botsCards.length - 1]].color ===
-      //   cards[centerCard].color &&
-      //   cards[botsCards[botsCards.length - 1]].color !== undefined &&
-      //   cards[centerCard].color !== undefined) ||
-
       // same action type
       (cards[currentCardIdx].type === cards[centerCard].type &&
         cards[currentCardIdx].function === cards[centerCard].function &&
@@ -95,21 +87,21 @@ function App() {
     }
     // safeguard after testing drawn cards for bot
     else if (!canPlayCards) {
+      console.log(`drawn card not playable`);
       setCanPlayCards(true);
     }
   };
 
   // put card in user/bot hand
   let drawCard = (setWhichHand, whichCards) => {
-    // if (canPlayCards) {
     let randomCard = generateRandomCard();
+    randomCard = 53;
 
-    while (cardsInPlay.includes(randomCard)) {
-      randomCard = generateRandomCard();
-    }
+    // while (cardsInPlay.includes(randomCard)) {
+    //   randomCard = generateRandomCard();
+    // }
     setWhichHand([...whichCards, randomCard]);
     setCardsInPlay([...cardsInPlay, randomCard]);
-    // }
   };
 
   // bot's turn
@@ -136,8 +128,6 @@ function App() {
     let greenCards = [];
     let redCards = [];
     let yellowCards = [];
-    // maybe: drawingCards[]
-
     botsCards.forEach((cardInHandIdx) => {
       let matchingNumbers =
         cards[cardInHandIdx].number === cards[centerCard].number;
@@ -153,17 +143,30 @@ function App() {
         wildCards.push(cardInHandIdx);
       }
 
-      // pushing cardIdxs to arrays
-      if (cardInHandIdx <= 9) {
+      if (cards[cardInHandIdx].color === "blue") {
         blueCards.push(cardInHandIdx);
-      } else if (cardInHandIdx >= 10 && cardInHandIdx <= 19) {
+      } else if (cards[cardInHandIdx].color === "green") {
         greenCards.push(cardInHandIdx);
-      } else if (cardInHandIdx >= 20 && cardInHandIdx <= 29) {
+      } else if (cards[cardInHandIdx].color === "red") {
         redCards.push(cardInHandIdx);
-      } else if (cardInHandIdx >= 30 && cardInHandIdx <= 39) {
+      } else if (cards[cardInHandIdx].color === "yellow") {
         yellowCards.push(cardInHandIdx);
       }
     });
+    setColorArrays([
+      blueCards.length,
+      greenCards.length,
+      redCards.length,
+      yellowCards.length,
+    ]);
+    // console.log(
+    //   Math.max(
+    //     blueCards.length,
+    //     greenCards.length,
+    //     redCards.length,
+    //     yellowCards.length
+    //   )
+    // );
 
     // determine which card to play
     // if N/A, draw card
@@ -207,13 +210,19 @@ function App() {
   useEffect(() => {
     if (!canPlayCards) {
       setTimeout(() => {
-        if (1 === 2) {
-          // if (wildCard) {
-          // botWildCardSelection():
+        // if wildCard is available
+        if (cards[botsCards[botsCards.length - 1]].type === "wild") {
+          console.log(colorArrays);
+          Math.max(colorArrays);
+          // if () {
+
+          // }
+
+          // wildCard();
+
           //   compare colorCard arrays. select one with highest length.
           //   if the same, choose whatever color user just changed from
           //   if none, randomly choose between ones of highest length
-          // }
         } else {
           console.log(
             `drawn: ${cards[botsCards[botsCards.length - 1]].color} ${
