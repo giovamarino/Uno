@@ -116,6 +116,11 @@ function App() {
     }
   }, [canPlayCards]);
 
+  let [blueCards, setBlueCards] = useState([]);
+  let [greenCards, setGreenCards] = useState([]);
+  let [redCards, setRedCards] = useState([]);
+  let [yellowCards, setYellowCards] = useState([]);
+
   // bot functions
   let scanHand = () => {
     // playable cards
@@ -124,10 +129,10 @@ function App() {
     let wildCards = [];
 
     // extra organization
-    let blueCards = [];
-    let greenCards = [];
-    let redCards = [];
-    let yellowCards = [];
+    // let blueCards = [];
+    // let greenCards = [];
+    // let redCards = [];
+    // let yellowCards = [];
     botsCards.forEach((cardInHandIdx) => {
       let matchingNumbers =
         cards[cardInHandIdx].number === cards[centerCard].number;
@@ -144,29 +149,15 @@ function App() {
       }
 
       if (cards[cardInHandIdx].color === "blue") {
-        blueCards.push(cardInHandIdx);
+        setBlueCards((currentCards) => [...currentCards, cardInHandIdx]);
       } else if (cards[cardInHandIdx].color === "green") {
-        greenCards.push(cardInHandIdx);
+        setGreenCards((currentCards) => [...currentCards, cardInHandIdx]);
       } else if (cards[cardInHandIdx].color === "red") {
-        redCards.push(cardInHandIdx);
+        setRedCards((currentCards) => [...currentCards, cardInHandIdx]);
       } else if (cards[cardInHandIdx].color === "yellow") {
-        yellowCards.push(cardInHandIdx);
+        setYellowCards((currentCards) => [...currentCards, cardInHandIdx]);
       }
     });
-    setColorArrays([
-      blueCards.length,
-      greenCards.length,
-      redCards.length,
-      yellowCards.length,
-    ]);
-    // console.log(
-    //   Math.max(
-    //     blueCards.length,
-    //     greenCards.length,
-    //     redCards.length,
-    //     yellowCards.length
-    //   )
-    // );
 
     // determine which card to play
     // if N/A, draw card
@@ -199,12 +190,15 @@ function App() {
       console.log(`numberedCards: ${numberedCards}`);
       console.log(`actionCards: ${actionCards}`);
       console.log(`wildCards: ${wildCards}`);
-      console.log(`blueCards: ${blueCards}`);
-      console.log(`greenCards: ${greenCards}`);
-      console.log(`redCards: ${redCards}`);
-      console.log(`yellowCards: ${yellowCards}`);
     }
   };
+
+  useEffect(() => {
+    console.log(blueCards);
+    console.log(greenCards);
+    console.log(redCards);
+    console.log(yellowCards);
+  }, [blueCards, greenCards, redCards, yellowCards]);
 
   // when bot draws 1 card
   useEffect(() => {
@@ -212,10 +206,30 @@ function App() {
       setTimeout(() => {
         // if wildCard is available
         if (cards[botsCards[botsCards.length - 1]].type === "wild") {
-          console.log(colorArrays);
-          Math.max(colorArrays);
-          // if () {
+          let maxLength = Math.max(
+            blueCards.length,
+            greenCards.length,
+            redCards.length,
+            yellowCards.length
+          );
 
+          let checkIfMultiple = 0;
+          let colorArrayHolder = [blueCards, greenCards, redCards, yellowCards];
+          colorArrayHolder.forEach((colorArray) => {
+            if (colorArray.length === maxLength) {
+              checkIfMultiple++;
+            }
+          });
+          // somewhere in this logic we change color to the one with highest length
+
+          if (checkIfMultiple >= 2) {
+            console.log(`multiple colors`);
+            //   if the same, choose whatever color user just changed from
+          }
+
+          // loop through array,
+          // if (each colorarray = maxlength, ) {
+          // checkIfMultiple++
           // }
 
           // wildCard();
