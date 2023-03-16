@@ -8,6 +8,9 @@ function App() {
   let [cardsInPlay, setCardsInPlay] = useState([]);
   let [canPlayCards, setCanPlayCards] = useState(true);
   let [colorArrays, setColorArrays] = useState([]);
+  let [pickingWildCard, setPickingWildCard] = useState(false);
+  let [lastTurnWild, setLastTurnWild] = useState(false);
+  let [colorChoice, setColorChoice] = useState();
 
   let generateRandomCard = () => {
     return Math.floor(Math.random() * cards.length);
@@ -56,8 +59,45 @@ function App() {
     }
   }, []);
 
+  let blue = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 40, 42, 52, 53];
+  let green = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 43, 44, 45, 52, 53];
+  let red = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 46, 47, 48, 52, 53];
+  let yellow = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 49, 50, 51, 52, 53];
+
   let playCard = (currentCardIdx, setWhichHand, whichCards) => {
+    // opens prompt
+    if (canPlayCards && cards[currentCardIdx].type === "wild") {
+      setPickingWildCard(true);
+      console.log(`playing the wild card`);
+    }
+
+    // handle if card is wild
     if (
+      cards[currentCardIdx].type === "wild" &&
+      cards[currentCardIdx].function !== undefined
+    ) {
+      // sets new center card. removes card from hand.
+      setCenterCard([currentCardIdx]);
+      let newHand = whichCards.filter((element) => element !== currentCardIdx);
+      setWhichHand(newHand);
+
+      // removes old center card from play
+      let [centerCardNumber] = centerCard;
+      let filteredCardsInPlay = cardsInPlay.filter(
+        (element) => element !== centerCardNumber
+      );
+      setCardsInPlay(filteredCardsInPlay);
+    }
+    // handle if last card was wild
+    else if (lastTurnWild === true) {
+      if (colorChoice.includes(currentCardIdx)) {
+        console.log(`valid card choice`);
+      } else {
+        console.log(`card choice needs to be same color`);
+      }
+    }
+    // handle if color / number / action match
+    else if (
       // same number
       (cards[currentCardIdx].number === cards[centerCard].number &&
         cards[currentCardIdx].number !== undefined &&
@@ -95,11 +135,11 @@ function App() {
   // put card in user/bot hand
   let drawCard = (setWhichHand, whichCards) => {
     let randomCard = generateRandomCard();
-    randomCard = 53;
+    // randomCard = 53;
 
-    // while (cardsInPlay.includes(randomCard)) {
-    //   randomCard = generateRandomCard();
-    // }
+    while (cardsInPlay.includes(randomCard)) {
+      randomCard = generateRandomCard();
+    }
     setWhichHand([...whichCards, randomCard]);
     setCardsInPlay([...cardsInPlay, randomCard]);
   };
@@ -227,25 +267,10 @@ function App() {
             //   if the same, choose whatever color user just changed from
           }
 
-          // loop through array,
-          // if (each colorarray = maxlength, ) {
-          // checkIfMultiple++
-          // }
-
-          // wildCard();
-
           //   compare colorCard arrays. select one with highest length.
           //   if the same, choose whatever color user just changed from
           //   if none, randomly choose between ones of highest length
         } else {
-          console.log(
-            `drawn: ${cards[botsCards[botsCards.length - 1]].color} ${
-              cards[botsCards[botsCards.length - 1]].number
-            }`
-          );
-          console.log(
-            `center: ${cards[centerCard].color} ${cards[centerCard].number}`
-          );
           playCard(botsCards[botsCards.length - 1], setBotsCards, botsCards);
         }
       }, 1000);
@@ -254,39 +279,62 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        {botsCards.map((cardInHand) => {
-          return <img src={cards[cardInHand].img} alt="" />;
-        })}
-      </div>
-      <div>
-        <img
-          onClick={() => {
-            if (canPlayCards) {
-              drawCard(setUsersCards, usersCards);
-            }
-          }}
-          src="/drawCard.png"
-          alt=""
-        />
-        {centerCard.map((card) => {
-          return <img src={cards[card].img} alt="" />;
-        })}
-      </div>
-      <div>
-        {usersCards.map((cardInHand) => {
-          return (
+      <div id="container">
+        <div className="row row-with-cards">
+          {botsCards.map((cardInHand) => {
+            return <img src={cards[cardInHand].img} alt="" />;
+          })}
+        </div>
+        <div className="row row-with-sides">
+          {/* <div className="sideOptions">
+            <p>skip turn</p>
+          </div> */}
+          <div>
             <img
               onClick={() => {
                 if (canPlayCards) {
-                  playCard(cardInHand, setUsersCards, usersCards);
+                  drawCard(setUsersCards, usersCards);
                 }
               }}
-              src={cards[cardInHand].img}
+              src="/drawCard.png"
               alt=""
             />
-          );
-        })}
+            {centerCard.map((card) => {
+              return <img src={cards[card].img} alt="" />;
+            })}
+          </div>
+          {pickingWildCard && (
+            <div className="sideOptions wildColorChange">
+              <p>Which Color?</p>
+              <div
+                onClick={() => {
+                  setColorChoice(blue);
+                  setLastTurnWild(true);
+                  setPickingWildCard(false);
+                  setCanPlayCards(!canPlayCards);
+                }}
+              ></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          )}
+        </div>
+        <div className="row row-with-cards">
+          {usersCards.map((cardInHand) => {
+            return (
+              <img
+                onClick={() => {
+                  if (canPlayCards) {
+                    playCard(cardInHand, setUsersCards, usersCards);
+                  }
+                }}
+                src={cards[cardInHand].img}
+                alt=""
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );
