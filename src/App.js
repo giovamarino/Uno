@@ -7,9 +7,8 @@ function App() {
   let [centerCard, setCenterCard] = useState([]);
   let [cardsInPlay, setCardsInPlay] = useState([]);
   let [canPlayCards, setCanPlayCards] = useState(true);
-  let [colorArrays, setColorArrays] = useState([]);
   let [pickingWildCard, setPickingWildCard] = useState(false);
-  let [lastTurnWild, setLastTurnWild] = useState(false);
+  let [centerCardWild, setCenterCardWild] = useState(false);
   let [colorChoice, setColorChoice] = useState();
 
   let generateRandomCard = () => {
@@ -19,7 +18,6 @@ function App() {
   useEffect(() => {
     let playCenterCard = () => {
       let randomCard = Math.floor(Math.random() * 40);
-      console.log(`center: ${cards[randomCard].name}`);
       return [randomCard];
     };
 
@@ -59,6 +57,7 @@ function App() {
     }
   }, []);
 
+  // card idxs to choose from after wild card selects a new color
   let blue = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 40, 42, 52, 53];
   let green = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 43, 44, 45, 52, 53];
   let red = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 46, 47, 48, 52, 53];
@@ -87,13 +86,36 @@ function App() {
         (element) => element !== centerCardNumber
       );
       setCardsInPlay(filteredCardsInPlay);
+      if (!canPlayCards) {
+        setCanPlayCards(!canPlayCards);
+      }
     }
     // handle if last card was wild
-    else if (lastTurnWild === true) {
-      if (colorChoice.includes(currentCardIdx)) {
+    else if (centerCardWild === true) {
+      if (canPlayCards && !colorChoice.includes(currentCardIdx)) {
+        // your turn && invalid choice
+        console.log(`do nothing`);
+      } else if (!canPlayCards && !colorChoice.includes(currentCardIdx)) {
+        console.log(`drawn card not of chosen color`);
+        setCanPlayCards(true);
+        //
+      } else if (colorChoice.includes(currentCardIdx)) {
         console.log(`valid card choice`);
-      } else {
-        console.log(`card choice needs to be same color`);
+        // sets new center card. removes card from hand.
+        setCenterCard([currentCardIdx]);
+        let newHand = whichCards.filter(
+          (element) => element !== currentCardIdx
+        );
+        setWhichHand(newHand);
+        // removes old center card from play
+        let [centerCardNumber] = centerCard;
+        let filteredCardsInPlay = cardsInPlay.filter(
+          (element) => element !== centerCardNumber
+        );
+        setCardsInPlay(filteredCardsInPlay);
+        setCanPlayCards(!canPlayCards);
+        setCenterCardWild(false);
+        setColorChoice();
       }
     }
     // handle if color / number / action match
@@ -129,6 +151,8 @@ function App() {
     else if (!canPlayCards) {
       console.log(`drawn card not playable`);
       setCanPlayCards(true);
+    } else {
+      console.log(`end of playCard(), do nothing`);
     }
   };
 
@@ -148,9 +172,6 @@ function App() {
   useEffect(() => {
     if (!canPlayCards) {
       setTimeout(() => {
-        // botsCards.forEach((cardInHand) => {
-        //   playCard(cardInHand, setBotsCards, botsCards);
-        // });
         scanHand();
       }, 1000);
     }
@@ -168,21 +189,22 @@ function App() {
     let actionCards = [];
     let wildCards = [];
 
-    // extra organization
-    // let blueCards = [];
-    // let greenCards = [];
-    // let redCards = [];
-    // let yellowCards = [];
+    // put each card into respective array(s)
     botsCards.forEach((cardInHandIdx) => {
       let matchingNumbers =
-        cards[cardInHandIdx].number === cards[centerCard].number;
+        cards[cardInHandIdx].number === cards[centerCard].number &&
+        cards[cardInHandIdx].number !== undefined;
       let matchingColors =
-        cards[cardInHandIdx].color === cards[centerCard].color;
+        cards[cardInHandIdx].color === cards[centerCard].color &&
+        cards[cardInHandIdx].color !== undefined;
+      let matchingFunction =
+        cards[cardInHandIdx].function === cards[centerCard].function &&
+        cards[cardInHandIdx].function !== undefined;
 
       // pushing cardIdxs to arrays
       if ((matchingNumbers || matchingColors) && cardInHandIdx <= 39) {
-        // numberedCards.push(cardInHandIdx);
-      } else if (matchingColors && cardInHandIdx >= 40 && cardInHandIdx <= 51) {
+        numberedCards.push(cardInHandIdx);
+      } else if (matchingColors || matchingFunction) {
         actionCards.push(cardInHandIdx);
       } else if (cardInHandIdx >= 52) {
         wildCards.push(cardInHandIdx);
@@ -199,9 +221,9 @@ function App() {
       }
     });
 
-    // determine which card to play
-    // if N/A, draw card
+    // bot decides which card to play
     if (
+      // if N/A, draw card
       numberedCards.length === 0 &&
       actionCards.length === 0 &&
       wildCards.length === 0
@@ -215,15 +237,23 @@ function App() {
       actionCards.length > 0
       // work on this logic later
     ) {
-      console.log(`play action card`);
+      console.log(`play action card, logic still WIP`);
+      let randomIndex = Math.floor(Math.random() * actionCards.length);
+      playCard(actionCards[randomIndex], setBotsCards, botsCards);
     }
     // play numbered card
     else if (numberedCards.length !== 0) {
-      console.log(`play random numbered card`);
+      console.log(`play random numbered card, logic still WIP`);
+      let randomIndex = Math.floor(Math.random() * numberedCards.length);
+      playCard(numberedCards[randomIndex], setBotsCards, botsCards);
     }
     // play wild card
     else {
-      console.log(`choose wild card `);
+      console.log(`choose wild card, logic still WIP`);
+      let randomIndex = Math.floor(Math.random() * wildCards.length);
+      setColorChoice(blue);
+      setCenterCardWild(true);
+      playCard(wildCards[randomIndex], setBotsCards, botsCards);
     }
 
     {
@@ -245,6 +275,9 @@ function App() {
     if (!canPlayCards) {
       setTimeout(() => {
         // if wildCard is available
+
+        console.log(`bot drew a card`);
+
         if (cards[botsCards[botsCards.length - 1]].type === "wild") {
           let maxLength = Math.max(
             blueCards.length,
@@ -309,14 +342,35 @@ function App() {
               <div
                 onClick={() => {
                   setColorChoice(blue);
-                  setLastTurnWild(true);
+                  setCenterCardWild(true);
                   setPickingWildCard(false);
                   setCanPlayCards(!canPlayCards);
                 }}
               ></div>
-              <div></div>
-              <div></div>
-              <div></div>
+              <div
+                onClick={() => {
+                  setColorChoice(green);
+                  setCenterCardWild(true);
+                  setPickingWildCard(false);
+                  setCanPlayCards(!canPlayCards);
+                }}
+              ></div>
+              <div
+                onClick={() => {
+                  setColorChoice(red);
+                  setCenterCardWild(true);
+                  setPickingWildCard(false);
+                  setCanPlayCards(!canPlayCards);
+                }}
+              ></div>
+              <div
+                onClick={() => {
+                  setColorChoice(yellow);
+                  setCenterCardWild(true);
+                  setPickingWildCard(false);
+                  setCanPlayCards(!canPlayCards);
+                }}
+              ></div>
             </div>
           )}
         </div>
