@@ -58,7 +58,7 @@ function App() {
   }, []);
 
   // card idxs to choose from after wild card selects a new color
-  let blue = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 40, 42, 52, 53];
+  let blue = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 40, 41, 42, 52, 53];
   let green = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 43, 44, 45, 52, 53];
   let red = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 46, 47, 48, 52, 53];
   let yellow = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 49, 50, 51, 52, 53];
@@ -100,7 +100,6 @@ function App() {
         setCanPlayCards(true);
         //
       } else if (colorChoice.includes(currentCardIdx)) {
-        console.log(`valid card choice`);
         // sets new center card. removes card from hand.
         setCenterCard([currentCardIdx]);
         let newHand = whichCards.filter(
@@ -116,6 +115,8 @@ function App() {
         setCanPlayCards(!canPlayCards);
         setCenterCardWild(false);
         setColorChoice();
+
+        // setCenterCardWild(true);
       }
     }
     // handle if color / number / action match
@@ -189,17 +190,27 @@ function App() {
     let actionCards = [];
     let wildCards = [];
 
+    console.log(`reaching this part too`);
+    console.log(`colorChoice: ${colorChoice}`);
+    // PROBLEM: card idxs not going into playable card arrays
+    // SOLUTION: fix if statement to include wild cards
+
     // put each card into respective array(s)
     botsCards.forEach((cardInHandIdx) => {
       let matchingNumbers =
         cards[cardInHandIdx].number === cards[centerCard].number &&
         cards[cardInHandIdx].number !== undefined;
       let matchingColors =
-        cards[cardInHandIdx].color === cards[centerCard].color &&
-        cards[cardInHandIdx].color !== undefined;
+        (cards[cardInHandIdx].color === cards[centerCard].color &&
+          cards[cardInHandIdx].color !== undefined) ||
+        (centerCardWild && colorChoice.includes(cardInHandIdx));
       let matchingFunction =
         cards[cardInHandIdx].function === cards[centerCard].function &&
         cards[cardInHandIdx].function !== undefined;
+
+      if (centerCardWild && colorChoice.includes(cardInHandIdx)) {
+        console.log(`wild card color choice matches`);
+      }
 
       // pushing cardIdxs to arrays
       if ((matchingNumbers || matchingColors) && cardInHandIdx <= 39) {
@@ -251,7 +262,7 @@ function App() {
     else {
       console.log(`choose wild card, logic still WIP`);
       let randomIndex = Math.floor(Math.random() * wildCards.length);
-      setColorChoice(blue);
+      chooseColor();
       setCenterCardWild(true);
       playCard(wildCards[randomIndex], setBotsCards, botsCards);
     }
@@ -263,46 +274,17 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    console.log(blueCards);
-    console.log(greenCards);
-    console.log(redCards);
-    console.log(yellowCards);
-  }, [blueCards, greenCards, redCards, yellowCards]);
-
   // when bot draws 1 card
   useEffect(() => {
     if (!canPlayCards) {
       setTimeout(() => {
-        // if wildCard is available
-
         console.log(`bot drew a card`);
 
+        // if wildCard drawn
         if (cards[botsCards[botsCards.length - 1]].type === "wild") {
-          let maxLength = Math.max(
-            blueCards.length,
-            greenCards.length,
-            redCards.length,
-            yellowCards.length
-          );
-
-          let checkIfMultiple = 0;
-          let colorArrayHolder = [blueCards, greenCards, redCards, yellowCards];
-          colorArrayHolder.forEach((colorArray) => {
-            if (colorArray.length === maxLength) {
-              checkIfMultiple++;
-            }
-          });
-          // somewhere in this logic we change color to the one with highest length
-
-          if (checkIfMultiple >= 2) {
-            console.log(`multiple colors`);
-            //   if the same, choose whatever color user just changed from
-          }
-
-          //   compare colorCard arrays. select one with highest length.
-          //   if the same, choose whatever color user just changed from
-          //   if none, randomly choose between ones of highest length
+          chooseColor();
+          setCenterCardWild(true);
+          playCard(botsCards[botsCards.length - 1], setBotsCards, botsCards);
         } else {
           playCard(botsCards[botsCards.length - 1], setBotsCards, botsCards);
         }
@@ -310,12 +292,66 @@ function App() {
     }
   }, [botsCards]);
 
+  let chooseColor = () => {
+    // count the number of cards for the most held color
+    let maxLength = Math.max(
+      blueCards.length,
+      greenCards.length,
+      redCards.length,
+      yellowCards.length
+    );
+
+    // checks if colors are equal in count (maximum # only)
+    let checkIfMultiple = 0;
+    // let mostHeldColors = [];
+    let colorArrayHolder = [blueCards, greenCards, redCards, yellowCards];
+    colorArrayHolder.forEach((colorArray) => {
+      if (colorArray.length === maxLength) {
+        // mostHeldColors.push(colorArray);
+        checkIfMultiple++;
+      }
+    });
+    // somewhere in this logic we change color to the one with highest length
+    // console.log(`mostHeldColors: ${mostHeldColors}`);
+
+    // if (checkIfMultiple >= 2) {
+    //   console.log(`tie between colors`);
+    //   // if the same, choose whatever color user just changed from
+    //   // for now
+    //   // let randomIndex = Math.floor(Math.random() * mostHeldColors.length);
+    //   // setColorChoice(mostHeldColors[randomIndex]);
+    // } else
+
+    if (blueCards.length === maxLength) {
+      console.log(`choosing blue`);
+      setColorChoice(blue);
+    } else if (greenCards.length === maxLength) {
+      console.log(`choosing green`);
+      setColorChoice(green);
+    } else if (redCards.length === maxLength) {
+      console.log(`choosing red`);
+      setColorChoice(red);
+    } else if (yellowCards.length === maxLength) {
+      console.log(`choosing yellow`);
+      setColorChoice(yellow);
+    }
+    //   compare colorCard arrays. select one with highest length.
+    //   if the same, choose whatever color user just changed from
+    //   if none, randomly choose between ones of highest length
+  };
+
   return (
     <div className="App">
       <div id="container">
         <div className="row row-with-cards">
           {botsCards.map((cardInHand) => {
-            return <img src={cards[cardInHand].img} alt="" />;
+            return (
+              <img
+                src={cards[cardInHand].img}
+                key={cards[cardInHand].name}
+                alt={cards[cardInHand].name}
+              />
+            );
           })}
         </div>
         <div className="row row-with-sides">
@@ -333,7 +369,13 @@ function App() {
               alt=""
             />
             {centerCard.map((card) => {
-              return <img src={cards[card].img} alt="" />;
+              return (
+                <img
+                  src={cards[card].img}
+                  key={cards[card].name}
+                  alt={cards[card].name}
+                />
+              );
             })}
           </div>
           {pickingWildCard && (
@@ -384,7 +426,8 @@ function App() {
                   }
                 }}
                 src={cards[cardInHand].img}
-                alt=""
+                key={cards[cardInHand].name}
+                alt={cards[cardInHand].name}
               />
             );
           })}
