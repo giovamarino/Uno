@@ -178,22 +178,23 @@ function App() {
     }
   }, [canPlayCards]);
 
-  let [blueCards, setBlueCards] = useState([]);
-  let [greenCards, setGreenCards] = useState([]);
-  let [redCards, setRedCards] = useState([]);
-  let [yellowCards, setYellowCards] = useState([]);
+  let blueCards = [];
+  let greenCards = [];
+  let redCards = [];
+  let yellowCards = [];
 
   // bot functions
   let scanHand = () => {
+    // reset color card arrays
+    blueCards = [];
+    greenCards = [];
+    redCards = [];
+    yellowCards = [];
+
     // playable cards
     let numberedCards = [];
     let actionCards = [];
     let wildCards = [];
-
-    console.log(`reaching this part too`);
-    console.log(`colorChoice: ${colorChoice}`);
-    // PROBLEM: card idxs not going into playable card arrays
-    // SOLUTION: fix if statement to include wild cards
 
     // put each card into respective array(s)
     botsCards.forEach((cardInHandIdx) => {
@@ -203,14 +204,13 @@ function App() {
       let matchingColors =
         (cards[cardInHandIdx].color === cards[centerCard].color &&
           cards[cardInHandIdx].color !== undefined) ||
-        (centerCardWild && colorChoice.includes(cardInHandIdx));
+        (centerCardWild &&
+          colorChoice.includes(cardInHandIdx) &&
+          cardInHandIdx !== 52 &&
+          cardInHandIdx !== 53);
       let matchingFunction =
         cards[cardInHandIdx].function === cards[centerCard].function &&
         cards[cardInHandIdx].function !== undefined;
-
-      if (centerCardWild && colorChoice.includes(cardInHandIdx)) {
-        console.log(`wild card color choice matches`);
-      }
 
       // pushing cardIdxs to arrays
       if ((matchingNumbers || matchingColors) && cardInHandIdx <= 39) {
@@ -221,14 +221,15 @@ function App() {
         wildCards.push(cardInHandIdx);
       }
 
+      // pushing to color arrays for bot to make informed choices while playing wild cards
       if (cards[cardInHandIdx].color === "blue") {
-        setBlueCards((currentCards) => [...currentCards, cardInHandIdx]);
+        blueCards.push(cardInHandIdx);
       } else if (cards[cardInHandIdx].color === "green") {
-        setGreenCards((currentCards) => [...currentCards, cardInHandIdx]);
+        greenCards.push(cardInHandIdx);
       } else if (cards[cardInHandIdx].color === "red") {
-        setRedCards((currentCards) => [...currentCards, cardInHandIdx]);
+        redCards.push(cardInHandIdx);
       } else if (cards[cardInHandIdx].color === "yellow") {
-        setYellowCards((currentCards) => [...currentCards, cardInHandIdx]);
+        yellowCards.push(cardInHandIdx);
       }
     });
 
@@ -279,15 +280,12 @@ function App() {
     if (!canPlayCards) {
       setTimeout(() => {
         console.log(`bot drew a card`);
-
-        // if wildCard drawn
-        if (cards[botsCards[botsCards.length - 1]].type === "wild") {
+        const drawnCard = botsCards[botsCards.length - 1];
+        if (cards[drawnCard].type === "wild") {
           chooseColor();
           setCenterCardWild(true);
-          playCard(botsCards[botsCards.length - 1], setBotsCards, botsCards);
-        } else {
-          playCard(botsCards[botsCards.length - 1], setBotsCards, botsCards);
         }
+        playCard(drawnCard, setBotsCards, botsCards);
       }, 1000);
     }
   }, [botsCards]);
@@ -301,28 +299,50 @@ function App() {
       yellowCards.length
     );
 
-    // checks if colors are equal in count (maximum # only)
+    console.log(`maxLength: ${maxLength}`);
+    console.log(blueCards.length);
+    console.log(greenCards.length);
+    console.log(redCards.length);
+    console.log(yellowCards.length);
+
+    // checks if maximum colors held are equal in count
     let checkIfMultiple = 0;
-    // let mostHeldColors = [];
+    let mostHeldColors = [];
     let colorArrayHolder = [blueCards, greenCards, redCards, yellowCards];
     colorArrayHolder.forEach((colorArray) => {
       if (colorArray.length === maxLength) {
-        // mostHeldColors.push(colorArray);
+        mostHeldColors.push(colorArray);
         checkIfMultiple++;
       }
     });
-    // somewhere in this logic we change color to the one with highest length
-    // console.log(`mostHeldColors: ${mostHeldColors}`);
+    console.log(`most held colors: ${mostHeldColors}`);
 
-    // if (checkIfMultiple >= 2) {
-    //   console.log(`tie between colors`);
-    //   // if the same, choose whatever color user just changed from
-    //   // for now
-    //   // let randomIndex = Math.floor(Math.random() * mostHeldColors.length);
-    //   // setColorChoice(mostHeldColors[randomIndex]);
-    // } else
+    // if bot's most held color is more than just one color
+    if (checkIfMultiple >= 2) {
+      console.log(`tie between colors`);
+      // if the same, choose whatever color user just changed from
 
-    if (blueCards.length === maxLength) {
+      // else, choose randomly most held color
+      let randomIndex = Math.floor(Math.random() * mostHeldColors.length);
+      mostHeldColors[randomIndex].forEach((color) => {
+        if (blue.includes(color)) {
+          setColorChoice(blue);
+          console.log(`Blue contains ${color}`);
+        }
+        if (green.includes(color)) {
+          setColorChoice(green);
+          console.log(`Green contains ${color}`);
+        }
+        if (red.includes(color)) {
+          setColorChoice(red);
+          console.log(`Red contains ${color}`);
+        }
+        if (yellow.includes(color)) {
+          setColorChoice(yellow);
+          console.log(`Yellow contains ${color}`);
+        }
+      });
+    } else if (blueCards.length === maxLength) {
       console.log(`choosing blue`);
       setColorChoice(blue);
     } else if (greenCards.length === maxLength) {
@@ -339,7 +359,6 @@ function App() {
     //   if the same, choose whatever color user just changed from
     //   if none, randomly choose between ones of highest length
   };
-
   return (
     <div className="App">
       <div id="container">
