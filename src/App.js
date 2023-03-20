@@ -15,6 +15,7 @@ function App() {
     return Math.floor(Math.random() * cards.length);
   };
 
+  // on initial load
   useEffect(() => {
     let playCenterCard = () => {
       let randomCard = Math.floor(Math.random() * 40);
@@ -86,6 +87,11 @@ function App() {
         (element) => element !== centerCardNumber
       );
       setCardsInPlay(filteredCardsInPlay);
+
+      // if card has draw attribute, make opposite player draw
+      handleDrawAttribute(currentCardIdx, setWhichHand, whichCards);
+
+      // if bot turn, change to user turn after playing wild card
       if (!canPlayCards) {
         setCanPlayCards(!canPlayCards);
       }
@@ -98,7 +104,6 @@ function App() {
       } else if (!canPlayCards && !colorChoice.includes(currentCardIdx)) {
         console.log(`drawn card not of chosen color`);
         setCanPlayCards(true);
-        //
       } else if (colorChoice.includes(currentCardIdx)) {
         // sets new center card. removes card from hand.
         setCenterCard([currentCardIdx]);
@@ -115,8 +120,6 @@ function App() {
         setCanPlayCards(!canPlayCards);
         setCenterCardWild(false);
         setColorChoice();
-
-        // setCenterCardWild(true);
       }
     }
     // handle if color / number / action match
@@ -147,6 +150,9 @@ function App() {
       );
       setCardsInPlay(filteredCardsInPlay);
       setCanPlayCards(!canPlayCards);
+
+      // if card has draw attribute:
+      handleDrawAttribute(currentCardIdx, setWhichHand, whichCards);
     }
     // safeguard after testing drawn cards for bot
     else if (!canPlayCards) {
@@ -158,15 +164,42 @@ function App() {
   };
 
   // put card in user/bot hand
-  let drawCard = (setWhichHand, whichCards) => {
+  let drawCard = (setWhichHand, whichCards, numberOfCards) => {
     let randomCard = generateRandomCard();
     // randomCard = 53;
 
-    while (cardsInPlay.includes(randomCard)) {
-      randomCard = generateRandomCard();
+    // if card forces opposite player to draw cards
+    if (numberOfCards) {
+      let cardsToAdd = [];
+      for (let i = 0; i < numberOfCards; i++) {
+        while (
+          cardsInPlay.includes(randomCard) ||
+          cardsToAdd.includes(randomCard)
+        ) {
+          randomCard = generateRandomCard();
+        }
+        cardsToAdd.push(randomCard);
+      }
+      setWhichHand([...whichCards, ...cardsToAdd]);
+      setCardsInPlay([...cardsInPlay, ...cardsToAdd]);
+    } else {
+      while (cardsInPlay.includes(randomCard)) {
+        randomCard = generateRandomCard();
+      }
+      setWhichHand([...whichCards, randomCard]);
+      setCardsInPlay([...cardsInPlay, randomCard]);
     }
-    setWhichHand([...whichCards, randomCard]);
-    setCardsInPlay([...cardsInPlay, randomCard]);
+  };
+
+  let handleDrawAttribute = (currentCardIdx, setWhichHand, whichCards) => {
+    // if card has draw attribute, make opposite player draw
+    if (cards[currentCardIdx].draw !== undefined) {
+      if (setWhichHand === setUsersCards && whichCards === usersCards) {
+        drawCard(setBotsCards, botsCards, cards[currentCardIdx].draw);
+      } else if (setWhichHand === setBotsCards && whichCards === botsCards) {
+        drawCard(setUsersCards, usersCards, cards[currentCardIdx].draw);
+      }
+    }
   };
 
   // bot's turn
